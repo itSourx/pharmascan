@@ -1,0 +1,1130 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+:root {
+  /* ── Palette ── */
+  --bg:            #eef4f0;
+  --cream:         #f7faf8;
+  --forest:        #03101B;
+  --ink:           #0d1f14;
+  --line:          #c8ddd1;
+
+  /* ── Accent pharmacie ── */
+  --green:         #00C896;
+  --green-deep:    #00a87c;
+  --green-dark:    #007a5a;
+  --green-glow:    rgba(0, 200, 150, .18);
+  --green-border:  rgba(0, 200, 150, .35);
+
+  /* ── Dégradés ── */
+  --main-color:    linear-gradient(175deg, rgb(6,20,32) 0%, rgb(8,32,22) 12%, rgb(6,55,36) 100%);
+  --blue-color:    linear-gradient(175deg, rgb(6,20,32) 0%, rgb(10,37,24) 80%, rgb(6,61,40) 100%);
+  --footer-color:  #03101B;
+
+  /* ── Typo ── */
+  --text-font:     'Plus Jakarta Sans', sans-serif;
+  --titles-font:   'Fraunces', serif;
+  --texts-size:    14px;
+
+  /* ── Misc ── */
+  --sb-width:      400px;
+  --radius-card:   10px;
+  --radius-lg:     16px;
+  --shadow-modal:  0 28px 72px rgba(0,0,0,.55), 0 4px 18px rgba(0,0,0,.3)
+}
+
+/* ════════════════════════════════════════
+   RESET & BASE
+════════════════════════════════════════ */
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: var(--text-font);
+  font-size: var(--texts-size);
+  color: var(--ink)
+}
+
+body { display: flex }
+
+/* ════════════════════════════════════════
+   LAYOUT
+════════════════════════════════════════ */
+.container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden
+}
+
+/* ════════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════════ */
+.sb {
+  width: var(--sb-width);
+  min-width: var(--sb-width);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--main-color);
+  overflow: hidden;
+  box-shadow: 4px 0 32px rgba(0,0,0,.28);
+  position: relative;
+  flex-shrink: 0
+}
+
+/* Barre verte supérieure */
+.sb::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green-dark), var(--green) 55%, transparent);
+  z-index: 2
+}
+
+/* Motif pointillé discret */
+.sb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,200,150,.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0
+}
+
+/* ── Header sidebar ── */
+.sh {
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1
+}
+
+/* Croix pharmacie decorative */
+.sh::before {
+  content: '+';
+  position: absolute;
+  top: 14px; right: 18px;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--green);
+  opacity: .12;
+  line-height: 1;
+  font-family: var(--text-font);
+  pointer-events: none
+}
+
+.ttl {
+  font-family: var(--titles-font);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #fff;
+  letter-spacing: -.01em
+}
+
+.ttl em {
+  font-style: italic;
+  color: var(--green)
+}
+
+.sub {
+  font-size: .72rem;
+  color: rgba(255,255,255,.38);
+  margin-top: 5px;
+  letter-spacing: .03em;
+  display: flex;
+  align-items: center;
+  gap: 6px
+}
+
+.sub::before {
+  content: '🇧🇯';
+  font-size: .8rem
+}
+
+/* ── Total compteur ── */
+.stot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: rgba(0,200,150,.07);
+  border-bottom: 1px solid rgba(0,200,150,.12);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1
+}
+
+.stot .lb {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.38);
+  display: flex;
+  align-items: center;
+  gap: 6px
+}
+
+.stot .lb::before {
+  content: '✚';
+  color: var(--green);
+  opacity: .7;
+  font-size: .75rem
+}
+
+.stot .nm {
+  font-family: var(--titles-font);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1;
+  letter-spacing: -.02em
+}
+
+/* ── Barre de recherche ── */
+.ssrch {
+  padding: 10px 14px 0;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0
+}
+
+.ssrch-wrap {
+  position: relative;
+  display: flex;
+  align-items: center
+}
+
+.ssrch-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 13px; height: 13px;
+  color: rgba(255,255,255,.28);
+  pointer-events: none;
+  flex-shrink: 0;
+  transition: color .15s
+}
+
+.ssrch-wrap:focus-within .ssrch-icon {
+  color: var(--green)
+}
+
+#pharmSearch {
+  width: 100%;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  padding: 9px 34px 9px 32px;
+  color: rgba(255,255,255,.88);
+  font-family: var(--text-font);
+  font-size: .82rem;
+  outline: none;
+  transition: background .15s, border-color .15s, box-shadow .15s
+}
+
+#pharmSearch::placeholder {
+  color: rgba(255,255,255,.2)
+}
+
+#pharmSearch:focus {
+  background: rgba(255,255,255,.09);
+  border-color: rgba(0,200,150,.45);
+  box-shadow: 0 0 0 3px rgba(0,200,150,.1)
+}
+
+.ssrch-clear {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,.1);
+  border: none;
+  color: rgba(255,255,255,.4);
+  font-size: .65rem;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  transition: background .13s, color .13s
+}
+
+.ssrch-clear.visible {
+  display: flex
+}
+
+.ssrch-clear:hover {
+  background: rgba(0,200,150,.2);
+  color: var(--green)
+}
+
+/* Dropdown suggestions */
+.ssug {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: calc(100% + 5px);
+  background: #0b1f17;
+  border: 1px solid var(--green-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.3);
+  z-index: 50;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: max-height .22s cubic-bezier(.4,.8,.6,1), opacity .15s ease
+}
+
+.ssug.open {
+  max-height: 280px;
+  opacity: 1;
+  pointer-events: all;
+  overflow-y: auto
+}
+
+.ssug::-webkit-scrollbar { width: 3px }
+.ssug::-webkit-scrollbar-thumb { background: rgba(0,200,150,.2); border-radius: 2px }
+.ssug::-webkit-scrollbar-track { background: transparent }
+
+/* Ligne résultat */
+.ssug-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: background .1s
+}
+
+.ssug-item:last-child { border-bottom: none }
+
+.ssug-item:hover,
+.ssug-item.active {
+  background: rgba(0,200,150,.1)
+}
+
+.ssug-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0
+}
+
+.ssug-cross {
+  font-size: .6rem;
+  color: var(--green);
+  opacity: .55;
+  flex-shrink: 0
+}
+
+.ssug-nom {
+  font-size: .82rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.82);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
+.ssug-nom mark {
+  background: transparent;
+  color: var(--green);
+  font-weight: 700
+}
+
+.ssug-meta {
+  font-size: .67rem;
+  color: rgba(255,255,255,.28);
+  white-space: nowrap;
+  flex-shrink: 0
+}
+
+.ssug-meta mark {
+  background: transparent;
+  color: rgba(0,200,150,.65);
+  font-weight: 600
+}
+
+.ssug-empty {
+  padding: 14px;
+  font-size: .78rem;
+  color: rgba(255,255,255,.25);
+  font-style: italic;
+  text-align: center
+}
+
+/* ── Liste départements ── */
+.sl {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 10px;
+  min-height: 0;
+  position: relative;
+  z-index: 1
+}
+
+.sl::-webkit-scrollbar { width: 3px }
+.sl::-webkit-scrollbar-thumb { background: rgba(0,200,150,.2); border-radius: 2px }
+.sl::-webkit-scrollbar-track { background: transparent }
+
+/* ── Ligne département ── */
+.dr {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: var(--radius-card);
+  margin-bottom: 2px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  animation: fadeUp .3s ease both;
+  transition: background .14s, border-color .14s, transform .12s
+}
+
+.dr:hover {
+  background: rgba(255,255,255,.055);
+  transform: translateX(2px)
+}
+
+.dr.act {
+  background: rgba(0,200,150,.1);
+  border-color: rgba(0,200,150,.28)
+}
+
+.dd {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255,255,255,.15);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.2)
+}
+
+.dn {
+  flex: 1;
+  font-size: .875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color .14s
+}
+
+.dr:hover .dn { color: rgba(255,255,255,.92) }
+.dr.act  .dn  { color: #fff; font-weight: 600 }
+
+.db {
+  width: 52px; height: 3px;
+  background: rgba(255,255,255,.08);
+  border-radius: 99px;
+  overflow: hidden;
+  flex-shrink: 0
+}
+
+.dbf {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--green-dark), var(--green));
+  transition: width .4s cubic-bezier(.4,1.6,.6,1)
+}
+
+.dv {
+  min-width: 30px;
+  font-size: .82rem;
+  font-weight: 700;
+  text-align: right;
+  color: rgba(255,255,255,.38);
+  transition: color .14s;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums
+}
+
+.dr:hover .dv { color: rgba(255,255,255,.65) }
+.dr.act  .dv  { color: var(--green) }
+
+/* ════════════════════════════════════════
+   ZONE CARTE
+════════════════════════════════════════ */
+.ma {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 18px;
+  gap: 12px;
+  overflow: hidden;
+  background: var(--bg);
+  background-image: radial-gradient(ellipse 70% 55% at 50% 45%, rgba(0,200,150,.06), transparent);
+  position: relative
+}
+
+.hl {
+  font-family: var(--titles-font);
+  font-size: .88rem;
+  color: #1a3a28;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .65;
+  flex-shrink: 0
+}
+
+.hl span {
+  font-style: italic;
+  font-weight: 700;
+  opacity: 1;
+  color: var(--green-dark);
+  letter-spacing: .02em
+}
+
+/* Boutons topbar */
+#btnLocateMain, #btnNearestPharm {
+  background: rgba(255,255,255,.85) !important;
+  color: var(--green-dark) !important;
+  border: 1.5px solid var(--line) !important;
+  border-radius: 20px !important;
+  padding: 5px 14px !important;
+  font-family: var(--text-font) !important;
+  font-size: .68rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .05em !important;
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(0,150,100,.12);
+  backdrop-filter: blur(4px);
+  transition: background .15s, box-shadow .15s, transform .1s !important
+}
+
+#btnLocateMain:hover, #btnNearestPharm:hover {
+  background: #fff !important;
+  box-shadow: 0 3px 12px rgba(0,150,100,.2) !important;
+  transform: translateY(-1px)
+}
+
+#btnNearestPharm {
+  background: var(--green-glow) !important;
+  border-color: var(--green-border) !important;
+  color: var(--green-dark) !important
+}
+
+/* ── Cadre carte SVG ── */
+.mf {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 4px 40px rgba(0,80,50,.10),
+    0 1px 6px rgba(0,80,50,.06),
+    inset 0 1px 0 rgba(255,255,255,.7);
+  padding: 12px;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%
+}
+
+.mf::before,
+.mf::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border-color: var(--green);
+  border-style: solid;
+  z-index: 2;
+  opacity: .6
+}
+
+.mf::before { top: 6px; left: 6px; border-width: 2px 0 0 2px; border-radius: 3px 0 0 0 }
+.mf::after  { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; border-radius: 0 0 3px 0 }
+
+svg#map { display: block; height: 100%; width: auto; max-width: 100% }
+
+.dz {
+  cursor: pointer;
+  transition: filter .18s, opacity .18s;
+  stroke: rgba(255,255,255,.55);
+  stroke-width: .7;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.08))
+}
+
+.dz:hover {
+  filter: brightness(.82) saturate(1.5) drop-shadow(0 2px 6px rgba(0,150,100,.35));
+  opacity: .92
+}
+
+.dz.sel {
+  filter: brightness(.72) saturate(1.7) drop-shadow(0 2px 8px rgba(0,200,150,.4));
+  stroke: var(--green);
+  stroke-width: 1.5
+}
+
+/* ── Bouton télécharger ── */
+.dl-btn {
+  position: absolute;
+  top: 12px; right: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,.88);
+  color: var(--green-dark);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: var(--text-font);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,.1);
+  backdrop-filter: blur(6px);
+  transition: background .15s, box-shadow .15s, transform .1s
+}
+
+.dl-btn:hover  { background: #fff; box-shadow: 0 4px 16px rgba(0,150,100,.18); transform: translateY(-1px) }
+.dl-btn:active { transform: scale(.97) }
+.dl-btn svg    { width: 12px; height: 12px; flex-shrink: 0 }
+
+/* ── Barre d'infos ── */
+.is {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255,255,255,.88);
+  border-radius: 30px;
+  padding: 0;
+  box-shadow: 0 2px 18px rgba(0,80,50,.12), 0 1px 4px rgba(0,80,50,.07);
+  border: 1px solid var(--line);
+  width: 100%;
+  max-width: 500px;
+  justify-content: space-around;
+  flex-shrink: 0;
+  overflow: hidden;
+  backdrop-filter: blur(8px)
+}
+
+.ic {
+  flex: 1;
+  padding: 9px 16px;
+  text-align: center
+}
+
+.ic .lb {
+  font-size: .58rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(10,40,25,.4);
+  margin-bottom: 3px
+}
+
+.ic .vl {
+  font-family: var(--titles-font);
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  line-height: 1.1
+}
+
+.idv {
+  width: 1px; height: 28px;
+  background: var(--line);
+  flex-shrink: 0
+}
+
+/* ════════════════════════════════════════
+   BOUTON MOBILE
+════════════════════════════════════════ */
+.mob-toggle {
+  display: none;
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: var(--main-color);
+  color: var(--green);
+  border: 1px solid var(--green-border);
+  border-radius: 24px;
+  padding: 9px 20px;
+  font-family: var(--text-font);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(0,0,0,.4);
+  white-space: nowrap;
+  transition: transform .15s, box-shadow .15s
+}
+
+.mob-toggle:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.45) }
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media(max-width:960px) {
+  :root { --sb-width: 320px }
+  .db { width: 44px }
+  .ic .vl { font-size: .85rem }
+}
+
+@media(max-width:620px) {
+  html, body { overflow: hidden }
+  .container { flex-direction: column }
+  .sb {
+    width: 100%; min-width: unset;
+    height: auto; max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s cubic-bezier(.4,0,.2,1)
+  }
+  .sb.open  { max-height: 55vh; overflow-y: auto }
+  .sl       { max-height: 30vh }
+  .ma       { padding: 10px 10px 60px; gap: 8px }
+  .hl       { font-size: .78rem; text-align: center }
+  .is       { gap: 0; border-radius: 12px }
+  .idv      { display: none }
+  .mob-toggle { display: block }
+}
+
+@media(max-width:380px) {
+  .is { flex-direction: column; border-radius: 12px }
+  .ic { padding: 8px 14px }
+  .idv { display: none }
+}
+
+/* ════════════════════════════════════════
+   MODAL DÉPARTEMENT
+════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(3,14,10,.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all
+}
+
+.modal {
+  background: var(--main-color);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 24px 22px;
+  width: min(480px, 90vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  box-shadow: var(--shadow-modal);
+  transform: translateY(12px) scale(.97);
+  transition: transform .28s cubic-bezier(.34,1.2,.64,1);
+  overflow: hidden
+}
+
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green-dark), var(--green) 60%, transparent);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0
+}
+
+.modal::after {
+  content: '+';
+  position: absolute;
+  bottom: -18px; right: 10px;
+  font-size: 9rem;
+  font-weight: 900;
+  color: var(--green);
+  opacity: .04;
+  line-height: 1;
+  font-family: var(--text-font);
+  pointer-events: none;
+  user-select: none
+}
+
+.modal-overlay.open .modal {
+  transform: translateY(0) scale(1)
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch
+}
+
+.modal-title {
+  font-family: var(--titles-font);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  flex: 1;
+  letter-spacing: -.01em
+}
+
+.modal-title em {
+  font-style: italic;
+  color: var(--green)
+}
+
+.modal-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.45);
+  font-size: .9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .13s, color .13s, border-color .13s;
+  flex-shrink: 0
+}
+
+.modal-close:hover {
+  background: rgba(0,200,150,.15);
+  border-color: var(--green-border);
+  color: var(--green)
+}
+
+/* Bouton localisation dans modal */
+#btnLocate {
+  background: rgba(0,200,150,.12) !important;
+  border: 1px solid var(--green-border) !important;
+  color: var(--green) !important;
+  border-radius: 20px !important;
+  padding: 6px 14px !important;
+  font-family: var(--text-font) !important;
+  font-size: .7rem !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: background .15s !important
+}
+
+#btnLocate:hover { background: rgba(0,200,150,.2) !important }
+
+.modal-map {
+  width: 100%;
+  background: var(--cream);
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 1 / 1.05;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
+.modal-map::before,
+.modal-map::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
+  border-color: var(--green);
+  border-style: solid;
+  z-index: 2;
+  pointer-events: none;
+  opacity: .6
+}
+
+.modal-map::before { top: 6px; left: 6px; border-width: 2px 0 0 2px; border-radius: 3px 0 0 0 }
+.modal-map::after  { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; border-radius: 0 0 3px 0 }
+
+.modal-map svg { display: block; width: 100%; height: 100% }
+
+.modal-dep-label {
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: rgba(255,255,255,.28);
+  font-family: var(--text-font)
+}
+
+.leaflet-attribution-flag { display: none !important }
+
+/* ════════════════════════════════════════
+   MODAL PHARMACIE
+════════════════════════════════════════ */
+.pharm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(3,14,10,.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease
+}
+
+.pharm-overlay.open {
+  opacity: 1;
+  pointer-events: all
+}
+
+.pharm-modal {
+  background: var(--main-color);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  width: min(430px, 90vw);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-modal);
+  transform: translateY(12px) scale(.97);
+  transition: transform .28s cubic-bezier(.34,1.2,.64,1);
+  overflow: hidden;
+  position: relative
+}
+
+.pharm-overlay.open .pharm-modal {
+  transform: translateY(0) scale(1)
+}
+
+.pharm-modal::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green-dark), var(--green) 60%, transparent);
+  flex-shrink: 0
+}
+
+.pharm-modal::after {
+  content: '✚';
+  position: absolute;
+  bottom: -8px; right: 14px;
+  font-size: 7rem;
+  color: var(--green);
+  opacity: .04;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1
+}
+
+.pharm-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px 22px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  gap: 10px
+}
+
+.pharm-modal-title {
+  font-family: var(--titles-font);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px
+}
+
+/* Badge croix pharmacie */
+.pharm-modal-title::before {
+  content: '✚';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  background: rgba(0,200,150,.14);
+  border: 1px solid var(--green-border);
+  border-radius: 6px;
+  color: var(--green);
+  font-size: .75rem;
+  flex-shrink: 0;
+  font-family: var(--text-font)
+}
+
+.pharm-modal-body {
+  padding: 10px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0
+}
+
+.pharm-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 9px 0
+}
+
+.pharm-label {
+  font-size: .6rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.3);
+  min-width: 86px;
+  padding-top: 2px;
+  flex-shrink: 0
+}
+
+.pharm-value {
+  font-size: .865rem;
+  color: rgba(255,255,255,.82);
+  font-weight: 500;
+  line-height: 1.45;
+  flex: 1
+}
+
+.pharm-value a {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity .13s
+}
+
+.pharm-value a:hover { opacity: .8; text-decoration: underline }
+
+.pharm-divider {
+  height: 1px;
+  background: rgba(255,255,255,.05)
+}
+
+/* Bouton itinéraire */
+#btnItinerary {
+  margin-top: 6px !important;
+  width: 100% !important;
+  padding: 12px !important;
+  background: linear-gradient(135deg, var(--green-dark), var(--green)) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-family: var(--text-font) !important;
+  font-size: .82rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .04em !important;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 16px rgba(0,150,100,.35) !important;
+  transition: opacity .15s, transform .1s !important
+}
+
+#btnItinerary:hover  { opacity: .9; transform: translateY(-1px) !important }
+#btnItinerary:active { transform: scale(.98) !important }
+
+/* ════════════════════════════════════════
+   LEAFLET POPUPS
+════════════════════════════════════════ */
+.leaflet-popup-content-wrapper {
+  background: var(--forest);
+  color: #fff;
+  border: 1px solid var(--green-border);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  font-family: var(--text-font);
+  font-size: .8rem
+}
+
+.leaflet-popup-tip { background: var(--forest) }
+
+.leaflet-popup-content {
+  margin: 10px 14px;
+  line-height: 1.5
+}
+
+.leaflet-popup-content strong { color: var(--green); font-weight: 700 }
+
+/* ════════════════════════════════════════
+   MARQUEUR PHARMACIE SÉLECTIONNÉE (recherche)
+════════════════════════════════════════ */
+.pharm-marker-selected {
+  position: relative;
+  width: 28px; height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
+.pharm-marker-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0,200,150,.22);
+  border: 1.5px solid rgba(0,200,150,.55);
+  animation: pharm-pulse 1.8s ease-in-out infinite
+}
+
+.pharm-marker-dot {
+  position: relative;
+  z-index: 1;
+  width: 14px; height: 14px;
+  background: #00C896;
+  border: 2.5px solid #fff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 3px rgba(0,200,150,.35),
+    0 3px 10px rgba(0,0,0,.45)
+}
+
+@keyframes pharm-pulse {
+  0%   { transform: scale(1);   opacity: .8 }
+  50%  { transform: scale(1.5); opacity: .3 }
+  100% { transform: scale(1);   opacity: .8 }
+}
+
+/* ════════════════════════════════════════
+   ANIMATIONS
+════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+
+.dr:nth-child(1)  { animation-delay: .04s }
+.dr:nth-child(2)  { animation-delay: .07s }
+.dr:nth-child(3)  { animation-delay: .10s }
+.dr:nth-child(4)  { animation-delay: .13s }
+.dr:nth-child(5)  { animation-delay: .16s }
+.dr:nth-child(6)  { animation-delay: .19s }
+.dr:nth-child(7)  { animation-delay: .22s }
+.dr:nth-child(8)  { animation-delay: .25s }
+.dr:nth-child(9)  { animation-delay: .28s }
+.dr:nth-child(10) { animation-delay: .31s }
+.dr:nth-child(11) { animation-delay: .34s }
+.dr:nth-child(12) { animation-delay: .37s }

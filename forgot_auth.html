@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PharmaScan — Mot de passe oublié</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f0f4f3;
+      --panel: #ffffff;
+      --primary: #0e6655;
+      --primary-light: #1a8870;
+      --primary-soft: #e8f5f1;
+      --accent2: #b8ead9;
+      --text: #1a2b27;
+      --muted: #6b8c82;
+      --border: #d4e8e0;
+      --error: #c0392b;
+      --input-bg: #f7faf9;
+      --shadow-sm: 0 2px 12px rgba(14, 102, 85, 0.08);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bg-crosses {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: radial-gradient(circle, rgba(14,102,85,0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .bg-shapes { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .bg-shapes span {
+      position: absolute; border-radius: 50%; opacity: 0.18; filter: blur(60px);
+      animation: floatShape 12s ease-in-out infinite alternate;
+    }
+    .bg-shapes span:nth-child(1) { width: 520px; height: 520px; background: var(--accent2); top: -180px; left: -100px; }
+    .bg-shapes span:nth-child(2) { width: 380px; height: 380px; background: var(--primary); bottom: -120px; right: -80px; animation-delay: -4s; }
+    @keyframes floatShape {
+      0% { transform: translate(0,0) scale(1); }
+      100% { transform: translate(30px,20px) scale(1.06); }
+    }
+
+    .card {
+      position: relative; z-index: 1;
+      background: var(--panel);
+      border-radius: 28px;
+      box-shadow: 0 24px 80px rgba(14, 102, 85, 0.15);
+      width: min(460px, 94vw);
+      overflow: hidden;
+      animation: pageIn 0.7s cubic-bezier(0.23,1,0.32,1) both;
+    }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(28px) scale(0.98); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* Top accent bar */
+    .card-top {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      padding: 32px 40px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-top::before {
+      content: '';
+      position: absolute; top: -50px; right: -50px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+    }
+    .card-top::after {
+      content: '';
+      position: absolute; bottom: -60px; left: -30px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 24px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .logo-text {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.35rem;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .logo-text span { color: var(--accent2); }
+
+    .icon-circle {
+      width: 56px; height: 56px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .icon-circle svg { width: 28px; height: 28px; }
+
+    .card-top h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.6rem;
+      color: #fff;
+      margin-bottom: 6px;
+      position: relative; z-index: 1;
+    }
+    .card-top p {
+      font-size: 0.86rem;
+      color: rgba(255,255,255,0.68);
+      line-height: 1.55;
+      position: relative; z-index: 1;
+    }
+
+    .card-body { padding: 36px 40px 40px; }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 32px;
+    }
+    .step {
+      display: flex; align-items: center; gap: 8px;
+      flex-shrink: 0;
+    }
+    .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--muted);
+      transition: all 0.3s;
+    }
+    .step.active .step-num {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .step.done .step-num {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .step-label {
+      font-size: 0.78rem; font-weight: 500;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+    .step.active .step-label,
+    .step.done .step-label { color: var(--primary); }
+    .step-line {
+      flex: 1;
+      height: 1.5px;
+      background: var(--border);
+      margin: 0 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step-line::after {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      height: 100%; width: 0%;
+      background: var(--primary);
+      transition: width 0.5s ease;
+    }
+    .step-line.filled::after { width: 100%; }
+
+    /* Panels */
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeSlide 0.35s ease both; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .field { margin-bottom: 20px; }
+    .field label {
+      display: block;
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--text);
+      margin-bottom: 7px;
+      letter-spacing: 0.01em;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap .icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); display: flex; align-items: center;
+    }
+    .input-wrap .icon svg { width: 16px; height: 16px; }
+    .input-wrap input {
+      width: 100%;
+      padding: 11px 14px 11px 40px;
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+      background: var(--input-bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.91rem;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      outline: none;
+    }
+    .input-wrap input:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(14,102,85,0.1);
+    }
+    .input-wrap input::placeholder { color: #a8c0b8; }
+
+    /* OTP inputs */
+    .otp-wrap {
+      display: flex; gap: 10px; justify-content: center;
+      margin-bottom: 8px;
+    }
+    .otp-input {
+      width: 52px; height: 58px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--input-bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .otp-input:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(14,102,85,0.1);
+    }
+    .otp-input.filled {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .resend-row {
+      text-align: center; margin-bottom: 20px;
+      font-size: 0.83rem; color: var(--muted);
+    }
+    .resend-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--primary); font-weight: 600; font-family: 'DM Sans', sans-serif;
+      font-size: 0.83rem; padding: 0;
+      transition: opacity 0.2s;
+    }
+    .resend-btn:disabled { opacity: 0.4; cursor: default; }
+
+    .countdown { font-weight: 600; color: var(--primary); }
+
+    .toggle-pw {
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      display: flex; align-items: center; padding: 2px;
+    }
+    .toggle-pw svg { width: 16px; height: 16px; }
+
+    .pw-strength {
+      margin-top: 8px;
+      display: flex; gap: 5px; align-items: center;
+    }
+    .pw-bar {
+      flex: 1; height: 3px; border-radius: 99px;
+      background: var(--border); transition: background 0.3s;
+    }
+    .pw-bar.weak   { background: #e74c3c; }
+    .pw-bar.medium { background: #f39c12; }
+    .pw-bar.strong { background: var(--primary); }
+    .pw-label { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+
+    .hint-text {
+      font-size: 0.8rem; color: var(--muted);
+      margin-top: 6px; line-height: 1.4;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 18px rgba(14,102,85,0.3);
+      position: relative; overflow: hidden;
+      margin-top: 4px;
+    }
+    .btn-primary::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(rgba(255,255,255,0.08), transparent);
+      border-radius: inherit;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(14,102,85,0.38); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary.loading { pointer-events: none; }
+    .btn-primary .btn-text { transition: opacity 0.2s; }
+    .btn-primary.loading .btn-text { opacity: 0; }
+    .btn-spinner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .btn-primary.loading .btn-spinner { opacity: 1; }
+    .spinner-ring {
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .back-link {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; margin-top: 20px;
+      font-size: 0.84rem; color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--primary); }
+    .back-link svg { width: 14px; height: 14px; }
+
+    /* Success state */
+    .success-icon {
+      width: 72px; height: 72px;
+      background: var(--primary-soft);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .success-icon svg { width: 36px; height: 36px; }
+    .success-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.55rem; color: var(--text);
+      text-align: center; margin-bottom: 10px;
+    }
+    .success-desc {
+      font-size: 0.87rem; color: var(--muted);
+      text-align: center; line-height: 1.6; margin-bottom: 28px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--text); color: #fff;
+      padding: 12px 24px; border-radius: 50px;
+      font-size: 0.88rem; font-weight: 500;
+      opacity: 0; transition: all 0.35s cubic-bezier(0.23,1,0.32,1);
+      pointer-events: none; z-index: 100; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: var(--primary); }
+    .toast.error   { background: var(--error); }
+
+    @media (max-width: 480px) {
+      .card-top, .card-body { padding-left: 24px; padding-right: 24px; }
+      .otp-input { width: 44px; height: 50px; font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-crosses"></div>
+<div class="bg-shapes"><span></span><span></span></div>
+
+<div class="card">
+
+  <!-- Header -->
+  <div class="card-top">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"/>
+          <path d="M9 12h6M12 9v6"/>
+        </svg>
+      </div>
+      <div class="logo-text">Pharma<span>Scan</span></div>
+    </div>
+
+    <div class="icon-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+      </svg>
+    </div>
+    <h1 id="card-title">Mot de passe oublié</h1>
+    <p id="card-desc">Entrez votre email pour recevoir un code de vérification.</p>
+  </div>
+
+  <div class="card-body">
+
+    <!-- Steps indicator -->
+    <div class="steps">
+      <div class="step active" id="step1">
+        <div class="step-num">1</div>
+        <span class="step-label">Email</span>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step" id="step2">
+        <div class="step-num">2</div>
+        <span class="step-label">Code</span>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step" id="step3">
+        <div class="step-num">3</div>
+        <span class="step-label">Nouveau mot de passe</span>
+      </div>
+    </div>
+
+    <!-- PANEL 1 : Email -->
+    <div class="panel active" id="panel-1">
+      <div class="field">
+        <label>Adresse email</label>
+        <div class="input-wrap">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </span>
+          <input type="email" id="reset-email" placeholder="votre@email.com" autocomplete="email"/>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-send" onclick="handleSendCode()">
+        <span class="btn-text">Envoyer le code</span>
+        <span class="btn-spinner"><span class="spinner-ring"></span></span>
+      </button>
+      <a href="pharmascan-auth.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Retour à la connexion
+      </a>
+    </div>
+
+    <!-- PANEL 2 : Code OTP -->
+    <div class="panel" id="panel-2">
+      <p class="hint-text" style="text-align:center; margin-bottom:20px;">
+        Un code à 6 chiffres a été envoyé à <strong id="email-display"></strong>
+      </p>
+      <div class="otp-wrap">
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="otp0"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="otp1"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="otp2"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="otp3"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="otp4"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="otp5"/>
+      </div>
+      <div class="resend-row">
+        Pas reçu ? <button class="resend-btn" id="resend-btn" onclick="handleResend()" disabled>Renvoyer (<span class="countdown" id="countdown">60</span>s)</button>
+      </div>
+      <button class="btn-primary" id="btn-verify" onclick="handleVerify()">
+        <span class="btn-text">Vérifier le code</span>
+        <span class="btn-spinner"><span class="spinner-ring"></span></span>
+      </button>
+      <a href="#" class="back-link" onclick="goToStep(1); return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Modifier l'email
+      </a>
+    </div>
+
+    <!-- PANEL 3 : Nouveau mot de passe -->
+    <div class="panel" id="panel-3">
+      <div class="field">
+        <label>Nouveau mot de passe</label>
+        <div class="input-wrap">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </span>
+          <input type="password" id="new-pw" placeholder="Min. 8 caractères" oninput="checkStrength(this.value)"/>
+          <button class="toggle-pw" type="button" onclick="togglePw('new-pw', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="pw-strength">
+          <div class="pw-bar" id="bar1"></div>
+          <div class="pw-bar" id="bar2"></div>
+          <div class="pw-bar" id="bar3"></div>
+          <span class="pw-label" id="pw-label">Entrez un mot de passe</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Confirmer le mot de passe</label>
+        <div class="input-wrap">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </span>
+          <input type="password" id="confirm-pw" placeholder="Répétez le mot de passe"/>
+          <button class="toggle-pw" type="button" onclick="togglePw('confirm-pw', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-reset" onclick="handleReset()">
+        <span class="btn-text">Réinitialiser le mot de passe</span>
+        <span class="btn-spinner"><span class="spinner-ring"></span></span>
+      </button>
+    </div>
+
+    <!-- PANEL 4 : Succès -->
+    <div class="panel" id="panel-4">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/>
+        </svg>
+      </div>
+      <div class="success-title">Mot de passe mis à jour !</div>
+      <div class="success-desc">
+        Votre mot de passe a été réinitialisé avec succès.<br/>Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.
+      </div>
+      <a href="pharmascan-auth.html">
+        <button class="btn-primary" style="margin-top:0">
+          <span class="btn-text">Se connecter</span>
+        </button>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let currentStep = 1;
+  let countdownTimer = null;
+
+  function goToStep(step) {
+    // Hide all panels
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + step).classList.add('active');
+
+    // Update step indicators
+    for (let i = 1; i <= 3; i++) {
+      const el = document.getElementById('step' + i);
+      el.classList.remove('active', 'done');
+      if (i < step) el.classList.add('done');
+      else if (i === step) el.classList.add('active');
+    }
+
+    // Update lines
+    document.getElementById('line1').classList.toggle('filled', step > 1);
+    document.getElementById('line2').classList.toggle('filled', step > 2);
+
+    // Update header
+    const titles = {
+      1: { t: 'Mot de passe oublié', d: 'Entrez votre email pour recevoir un code de vérification.' },
+      2: { t: 'Vérification', d: 'Saisissez le code à 6 chiffres envoyé par email.' },
+      3: { t: 'Nouveau mot de passe', d: 'Choisissez un mot de passe sécurisé pour votre compte.' },
+      4: { t: 'Réinitialisation réussie', d: 'Votre compte est sécurisé.' }
+    };
+    if (titles[step]) {
+      document.getElementById('card-title').textContent = titles[step].t;
+      document.getElementById('card-desc').textContent = titles[step].d;
+    }
+
+    currentStep = step;
+  }
+
+  function fakeLoad(btnId, cb) {
+    const btn = document.getElementById(btnId);
+    btn.classList.add('loading');
+    setTimeout(() => { btn.classList.remove('loading'); cb(); }, 1600);
+  }
+
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    setTimeout(() => t.classList.add('show'), 10);
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  // Step 1: Send code
+  function handleSendCode() {
+    const email = document.getElementById('reset-email').value.trim();
+    if (!email || !email.includes('@')) { showToast('Veuillez entrer un email valide', 'error'); return; }
+    fakeLoad('btn-send', () => {
+      document.getElementById('email-display').textContent = email;
+      goToStep(2);
+      startCountdown();
+    });
+  }
+
+  // Countdown for resend
+  function startCountdown() {
+    let sec = 60;
+    const btn = document.getElementById('resend-btn');
+    const countdown = document.getElementById('countdown');
+    btn.disabled = true;
+    countdown.textContent = sec;
+    clearInterval(countdownTimer);
+    countdownTimer = setInterval(() => {
+      sec--;
+      countdown.textContent = sec;
+      if (sec <= 0) {
+        clearInterval(countdownTimer);
+        btn.disabled = false;
+        btn.textContent = 'Renvoyer le code';
+      }
+    }, 1000);
+  }
+
+  function handleResend() {
+    showToast('Code renvoyé !', 'success');
+    const btn = document.getElementById('resend-btn');
+    btn.innerHTML = 'Renvoyer (<span class="countdown" id="countdown">60</span>s)';
+    startCountdown();
+  }
+
+  // OTP input logic
+  const otpInputs = document.querySelectorAll('.otp-input');
+  otpInputs.forEach((input, i) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/\D/g, '');
+      if (input.value) {
+        input.classList.add('filled');
+        if (i < 5) otpInputs[i + 1].focus();
+      } else {
+        input.classList.remove('filled');
+      }
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && i > 0) {
+        otpInputs[i - 1].focus();
+        otpInputs[i - 1].classList.remove('filled');
+      }
+    });
+    input.addEventListener('paste', (e) => {
+      const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+      pasted.split('').forEach((char, idx) => {
+        if (otpInputs[idx]) { otpInputs[idx].value = char; otpInputs[idx].classList.add('filled'); }
+      });
+      e.preventDefault();
+    });
+  });
+
+  // Step 2: Verify OTP
+  function handleVerify() {
+    const code = Array.from(otpInputs).map(i => i.value).join('');
+    if (code.length < 6) { showToast('Veuillez saisir les 6 chiffres du code', 'error'); return; }
+    fakeLoad('btn-verify', () => { goToStep(3); });
+  }
+
+  // Password strength
+  function checkStrength(val) {
+    const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3')];
+    const label = document.getElementById('pw-label');
+    bars.forEach(b => b.className = 'pw-bar');
+    if (!val) { label.textContent = 'Entrez un mot de passe'; return; }
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const levels = ['weak', 'medium', 'strong'];
+    const labels = ['Faible', 'Moyen', 'Fort'];
+    for (let i = 0; i < score; i++) bars[i].classList.add(levels[score - 1]);
+    label.textContent = labels[score - 1] || 'Faible';
+  }
+
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    btn.innerHTML = isHidden
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  }
+
+  // Step 3: Reset password
+  function handleReset() {
+    const pw = document.getElementById('new-pw').value;
+    const confirm = document.getElementById('confirm-pw').value;
+    if (pw.length < 8) { showToast('Mot de passe trop court (min. 8 caractères)', 'error'); return; }
+    if (pw !== confirm) { showToast('Les mots de passe ne correspondent pas', 'error'); return; }
+    fakeLoad('btn-reset', () => { goToStep(4); });
+  }
+</script>
+</body>
+</html>

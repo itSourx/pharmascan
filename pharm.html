@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmascan</title>
+<link rel="shortcut icon" href="assets/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="css/pharm.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="assets/Component 1.png" alt="">
+    <!--<div>
+      <div class="logo-text">PharmaScan</div>
+      <div class="logo-sub">Répertoire National</div>
+    </div>-->
+  </div>
+  <div class="header-clock" id="headerClock">
+    <span id="clockDate"></span>
+    <span id="clockTime"></span>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero-strip">
+  <div class="hero-title">Répertoire National des Pharmacies</div>
+  <div class="hero-sub">Gérez et consultez la liste des pharmacies enregistrées</div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      class="search-input"
+      id="searchInput"
+      placeholder="Rechercher par nom, ville, quartier…"
+    />
+  </div>
+  <button class="btn-import" onclick="triggerImport()" title="Importer depuis un fichier CSV ou Excel">
+    <span style="font-size:15px; line-height:1;">⬆</span> Importer CSV / Excel
+  </button>
+  <button class="btn-add" onclick="openModal()">
+    <span style="font-size:16px; line-height:1;">＋</span> Ajouter une pharmacie
+  </button>
+  <!-- Hidden file input -->
+  <input type="file" id="importFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileImport(event)" />
+  <div class="stat-pill" id="statPill">0 pharmacie</div>
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+  <table id="pharmacyTable">
+    <thead>
+      <tr>
+        <th style="width:52px;">N°</th>
+        <th>Nom</th>
+        <th>Département</th>
+        <th>Ville</th>
+        <th>Quartier</th>
+        <th>Adresse</th>
+        <th>Téléphone</th>
+        <th>Email</th>
+        <th style="text-align:center;">Latitude</th>
+        <th style="text-align:center;">Longitude</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">🏥</div>
+    <div class="empty-title">Aucune pharmacie enregistrée</div>
+    <div class="empty-sub">Cliquez sur « Ajouter une pharmacie » pour commencer.</div>
+  </div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- MODAL ADD/EDIT -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Nouvelle Pharmacie</div>
+        <div class="modal-subtitle" id="modalSubtitle">Remplissez toutes les informations requises</div>
+      </div>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group full">
+        <label for="f-nom">Nom de la pharmacie *</label>
+        <input type="text" id="f-nom" placeholder="Ex : Pharmacie du Bénin" />
+      </div>
+      <div class="form-group">
+        <label for="f-dept">Département *</label>
+        <select id="f-dept">
+          <option value="">— Sélectionner —</option>
+          <option value="Alibori">Alibori</option>
+          <option value="Atacora">Atacora</option>
+          <option value="Atlantique">Atlantique</option>
+          <option value="Borgou">Borgou</option>
+          <option value="Collines">Collines</option>
+          <option value="Couffo">Couffo</option>
+          <option value="Donga">Donga</option>
+          <option value="Littoral">Littoral</option>
+          <option value="Mono">Mono</option>
+          <option value="Ouémé">Ouémé</option>
+          <option value="Plateau">Plateau</option>
+          <option value="Zou">Zou</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="f-ville">Ville *</label>
+        <input type="text" id="f-ville" placeholder="Ex : Cotonou" />
+      </div>
+      <div class="form-group">
+        <label for="f-quartier">Quartier *</label>
+        <input type="text" id="f-quartier" placeholder="Ex : Cadjehoun" />
+      </div>
+      <div class="form-group">
+        <label for="f-tel">Téléphone *</label>
+        <input type="tel" id="f-tel" placeholder="Ex : +229 21 30 00 00" />
+      </div>
+      <div class="form-group">
+        <label for="f-email">Email <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;">(optionnel)</span></label>
+        <input type="email" id="f-email" placeholder="Ex : contact@pharmacie.bj" />
+      </div>
+      <div class="form-group">
+        <label for="f-lat">Latitude <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;">(optionnel)</span></label>
+        <input type="text" id="f-lat" placeholder="Ex : 6.3654" inputmode="decimal" />
+      </div>
+      <div class="form-group">
+        <label for="f-lng">Longitude <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;">(optionnel)</span></label>
+        <input type="text" id="f-lng" placeholder="Ex : 2.4183" inputmode="decimal" />
+      </div>
+      <div class="form-group full">
+        <label for="f-adresse">Adresse complète *</label>
+        <input type="text" id="f-adresse" placeholder="Ex : Rue des Palmiers, lot 12" />
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-submit" id="btnSubmit" onclick="submitForm()">
+        <span>✓</span> <span id="btnSubmitLabel">Enregistrer</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IMPORT PREVIEW -->
+<div class="overlay" id="importOverlay" onclick="handleImportOverlayClick(event)">
+  <div class="modal import-modal" id="importModal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Aperçu de l'importation</div>
+        <div class="modal-subtitle" id="importSubtitle">Vérifiez les données avant d'importer</div>
+      </div>
+      <button class="btn-close" onclick="closeImportModal()">✕</button>
+    </div>
+
+    <div class="import-modal-body">
+      <!-- Colonne mapping info -->
+      <div id="importMappingInfo" class="import-mapping-info"></div>
+      <!-- Stats -->
+      <div id="importStats" class="import-stats"></div>
+      <!-- Preview table -->
+      <div class="import-preview-wrapper">
+        <table id="importPreviewTable" class="import-preview-table"></table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeImportModal()">Annuler</button>
+      <button class="btn-submit" id="btnConfirmImport" onclick="confirmImport()">
+        <span>⬆</span> <span id="importConfirmLabel">Importer</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span>✅</span> <span id="toastMsg">Pharmacie ajoutée avec succès !</span>
+</div>
+
+<!-- SheetJS pour la lecture des fichiers Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="js/pharm.js"></script>
+</body>
+</html>
